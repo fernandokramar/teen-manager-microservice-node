@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+  teen-manager_nestjs:
+    build:
+      context: ./
+      dockerfile: ./.docker/Dockerfile
+    container_name: teen-manager_nestjs
+    restart: always
+    entrypoint: ./.docker/entrypoint.sh
+    environment:
+      POSTGRES_HOST: teen-manager_db
+    networks:
+      - teen-manager-network
+    volumes:
+      - .:/home/node/app
+    depends_on:
+      - teen-manager_db
+    ports:
+      - ${PORT}:${PORT}
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
+
+  teen-manager_db:
+    image: postgres:13.3-alpine
+    container_name: teen-manager_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DATABASE}
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    volumes:
+      - teen-manager-data:/var/lib/postgresql/data
+    extra_hosts:
+      - "host.docker.internal:172.17.0.1"
+    networks:
+      - teen-manager-network
+
+volumes:
+  teen-manager-data:
+
+networks:
+  teen-manager-network:

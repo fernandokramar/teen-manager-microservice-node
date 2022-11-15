@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  uid         String     @id @default(uuid())
+  address_uid String?    @unique
+  name        String
+  email       String     @unique
+  password    String
+  deleted_at  DateTime?
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @updatedAt
+  address     Address?   @relation(fields: [address_uid], references: [uid])
+  offenders   Offenders[]
+
+  @@map("users")
+}
+
+model Address {
+  uid            String     @id @default(uuid())
+  resides_brazil Boolean
+  address        String
+  number         Int?
+  zipcode        String?
+  state          String
+  complement     String
+  refenrece      String
+  city           String
+  deleted_at     DateTime?
+  created_at     DateTime   @default(now())
+  updated_at     DateTime   @updatedAt
+  offenders      Offenders[]
+  user           User?
+
+  @@map("addresses")
+}
+
+model Offenders {
+  uid             String           @id @default(uuid())
+  address_uid     String?
+  user_uid        String          
+  complement_uid  String?        
+  name            String
+  socialname      String
+  nickname        String
+  birth_date      DateTime
+  document        String
+  age             Int
+  gender          ratingReviews
+  crea_cras       Boolean
+  deleted_at      DateTime?
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+  address         Address?         @relation(fields: [address_uid], references: [uid])
+  complementaries Complementaries? @relation(fields: [complement_uid], references: [uid])
+  user            User?            @relation(fields: [user_uid], references: [uid])
+
+  @@map("offenders")
+}
+
+model Complementaries {
+  uid          String     @id @default(uuid())
+  seizure_date DateTime
+  seizure      String
+  registry     Int
+  picture      String
+  deleted_at   DateTime?
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
+  offenders    Offenders[]
+
+  @@map("complementaries")
+}
+
+enum ratingReviews {
+  female
+  male
+}
