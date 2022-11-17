@@ -6,6 +6,7 @@ export default class UsersSeeder {
   public static async execute(address1: any, address2: any) {
     const user01 = await prisma.user.create({
       data: {
+        uid: '01',
         email: 'fernando.kramar@gmail.com',
         name: 'fernando Kramar',
         password: await bcrypt.hash('123456', 10),
